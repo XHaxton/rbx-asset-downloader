@@ -291,7 +291,7 @@ end
 -- Main program controller, handles arguments and primary functions
 local function initialize()
     print("Roblox Asset Downloader (v"..dlVer..")")
-    print("Programmed by SkylarZYX")
+    print("Scripted by SkylarZYX")
     print("")
     if #process.args > 6 then
         error("Too many arguments!")
