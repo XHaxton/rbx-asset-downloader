@@ -8,6 +8,9 @@ local net = require("@lune/net")::any
 local process = require("@lune/process")::any
 local task = require("@lune/task")::any
 
+-- Version
+local dlVer = "1.0a"
+
 -- Log file
 local logs = "astDL.log"
 -- Clear previous logs on start
@@ -287,7 +290,7 @@ end
 
 -- Main program controller, handles arguments and primary functions
 local function initialize()
-    print("Roblox Asset Downloader (v1.0)")
+    print("Roblox Asset Downloader (v"..dlVer..")")
     print("Programmed by SkylarZYX")
     print("")
     if #process.args > 6 then
