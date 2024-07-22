@@ -25,6 +25,8 @@ If you're on Windows, simply click on install.bat, and it will install it for yo
 
 If you're on Mac, you'll have to find a way to move the plugin script to your local roblox plugin path, sorry (not familiar with Macs) :(
 
+Since this does use Roblox's open cloud APIs, it's important that you get an API key from https://create.roblox.com with asset api permissions.
+
 # Credits
 ### rbxdl by Modnark (for inspiring me to make this, and giving me the proper assetType table)
 https://github.com/Modnark/rbxdl
