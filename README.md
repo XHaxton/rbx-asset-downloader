@@ -2,7 +2,7 @@
 
 # Roblox Asset Downloader
 ### Version 1.0a
-Originally programmed by SkylarZYX
+Originally scripted by SkylarZYX
 
 It downloads, gathers, and saves asset data from a list of assetdelivery URLs (from a specified text file) to your computer. It's quite useful for trying to preserve your cloud saved assets locally on a project.
 Locally saved assets can also be accessed in studio by copying and pasting the gathered assets you have into the "contents" folder. Using "rbxasset://" as the content folder path.
