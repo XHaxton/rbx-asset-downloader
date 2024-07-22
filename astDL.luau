@@ -1,4 +1,4 @@
--- Originally Programmed by SkylarZYX / XYZ Studio
+-- Originally Scripted by SkylarZYX / XYZ Studio
 -- Last Updated: 2024/07/21
 
 -- Get lune libraries
