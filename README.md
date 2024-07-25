@@ -15,6 +15,8 @@ I plan on adding additional features for converting local to cloud asset paths o
 ## Usage
 `lune run astDL -- key.txt astUrls.txt [optional args: --outDir specificDirectory --spVer (number)]`
 
+Here is a [demonstration video on how to use the plugin and the lune script](https://www.youtube.com/watch?v=gRPPp1EyWTg)
+
 # Dependencies
 ### [Lune (v0.8.6+)](https://github.com/lune-org/lune)
 
@@ -24,6 +26,8 @@ Plugin dependency: [Roblox Studio](https://create.roblox.com/)
 If you're on Windows, simply click on install.bat, and it will install it for you.
 
 If you're on Mac, you'll have to find a way to move the plugin script to your local roblox plugin path, sorry (not familiar with Macs) :(
+
+Since this does use Roblox's open cloud APIs, it's important that you get an API key from https://create.roblox.com with asset api permissions.
 
 # Credits
 ### rbxdl by Modnark (for inspiring me to make this, and giving me the proper assetType table)
