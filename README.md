@@ -15,7 +15,7 @@ I plan on adding additional features for converting local to cloud asset paths o
 ## Usage
 `lune run astDL -- key.txt astUrls.txt [optional args: --outDir specificDirectory --spVer (number)]`
 
-Here is a [demonstration video on how to use the plugin and the lune script](https://www.youtube.com/watch?v=8pldckvwTO8)
+Here is a [demonstration video on how to use the plugin and the lune script](https://youtu.be/DTQGLliZKB4)
 
 # Dependencies
 ### [Lune (v0.8.6+)](https://github.com/lune-org/lune)
