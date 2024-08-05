@@ -7,7 +7,7 @@ local Selection = game:GetService("Selection")
 local TweenService = game:GetService("TweenService")
 
 -- Main Variables
-local ver = "1.0a"
+local ver = "1.0b"
 
 local urlTmpl = "https://assetdelivery.roblox.com/v1/asset/?id="
 local urlBtnDB = false
@@ -106,7 +106,7 @@ UI["1"]["BorderColor3"] = Color3.fromRGB(0, 0, 0)
 UI["2"] = Instance.new("ScrollingFrame", UI["1"])
 UI["2"]["Active"] = true
 UI["2"]["BorderSizePixel"] = 0
-UI["2"]["CanvasSize"] = UDim2.new(0, 0, 4, 0)
+UI["2"]["CanvasSize"] = UDim2.new(0, 0, 32, 0)
 UI["2"]["BackgroundColor3"] = Color3.fromRGB(104, 104, 104)
 UI["2"]["Size"] = UDim2.new(0.94981, 0, 0.70088, 0)
 UI["2"]["ScrollBarImageColor3"] = Color3.fromRGB(0, 0, 0)
@@ -324,57 +324,24 @@ local function getProperty(obj,propName)
 	return ({pcall(function()if(typeof(obj[propName])=="Instance")then error("")end end)})[1]
 end
 
--- Main Functions
-
-local function resetStatus(status)
-	status.Text = "Select instance(s)..."
-end
-
-local function clearTxt(txt,status)
-	txt.Text = ""
-	status.Text = "Cleared Text!"
-	task.wait(1)
-	resetStatus(status)
-end
-
-local function getAssetIds(prop,status)
-	local assetIds = {}
-	local valid = false
-	for i=1,#validProps do
-		if prop == validProps[i] then
-			valid = true
-			for i,v in pairs(Selection:Get()) do
-				status.Text = "Searching " ..v.Name .."..."
-				if getProperty(v,prop) then
-					if typeof(v[prop]) == "string" then
-						if v[prop] ~= "" then
-							table.insert(assetIds,v[prop])
-						end
-					end
-				else
-					for j,k in pairs(v:GetDescendants()) do
-						if getProperty(k,prop) then
-							if typeof(k[prop]) == "string" then
-								if k[prop] ~= "" then
-									table.insert(assetIds,k[prop])
-								end
-							end
-						end
-					end
-				end
-			end
-			if #assetIds == 0 then
-				status.Text = "No assetids found!"
-			else
-				status.Text = "Assetids found!"
+local function matchIdPatterns(id)
+	for i=1,#idPatterns do
+		if string.match(id,idPatterns[i]) then
+			if not string.match(id,idPatterns[3]) then
+				return true
 			end
 		end
 	end
-	if valid == false then
-		status.Text = "The property, "..prop..", is not recognized as an asset."
+	return false
+end
+
+local function matchTableValue(tbl,value)
+	for i,v in ipairs(tbl) do
+		if v == value then
+			return true
+		end
 	end
-	assetIdsGet = true
-	return assetIds
+	return false
 end
 
 --[[ local function isolateIdOld(id)
@@ -406,6 +373,67 @@ local function isolateId(id)
 		end
 	end
 	return id
+end
+
+-- Main Functions
+
+local function resetStatus(status)
+	status.Text = "Select instance(s)..."
+end
+
+local function clearTxt(txt,status)
+	txt.Text = ""
+	status.Text = "Cleared Text!"
+	task.wait(1)
+	resetStatus(status)
+end
+
+local function getAssetIds(prop,status)
+	local assetIds = {}
+	local valid = false
+	for i=1,#validProps do
+		if prop == validProps[i] then
+			valid = true
+			for i,v in pairs(Selection:Get()) do
+				status.Text = "Searching " ..v.Name .."..."
+				if getProperty(v,prop) then
+					if typeof(v[prop]) == "string" then
+						if v[prop] ~= "" then
+							if matchIdPatterns(v[prop]) then
+								if not matchTableValue(assetIds,v[prop]) then
+									table.insert(assetIds,v[prop])
+								end
+							end
+						end
+					end
+				else
+					for j,k in pairs(v:GetDescendants()) do
+						if getProperty(k,prop) then
+							if typeof(k[prop]) == "string" then
+								if k[prop] ~= "" then
+									if matchIdPatterns(k[prop]) then
+										if not matchTableValue(assetIds,k[prop]) then
+											table.insert(assetIds,k[prop])
+										end
+									end
+								end
+							end
+						end
+					end
+				end
+			end
+			if #assetIds == 0 then
+				status.Text = "No assetids found!"
+			else
+				status.Text = "Assetids found!"
+			end
+		end
+	end
+	if valid == false then
+		status.Text = "The property, "..prop..", is not recognized as an asset."
+	end
+	assetIdsGet = true
+	return assetIds
 end
 
 local function resetSplash()

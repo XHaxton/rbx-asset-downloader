@@ -9,7 +9,7 @@ local process = require("@lune/process")::any
 local task = require("@lune/task")::any
 
 -- Version
-local dlVer = "1.0a"
+local dlVer = "1.0b"
 
 -- Log file
 local logs = "astDL.log"
@@ -22,6 +22,8 @@ local apiKey
 local spDir = nil
 -- Asset Version Specification (Optional)
 local spVer = nil
+-- Ignore failed asset downloads
+local ignoreDLErrors = false
 
 -- Roblox API url templates
 local assetUrlTmpl = "https://assetdelivery.roblox.com/v1/asset/?id="
@@ -30,39 +32,39 @@ local cloudTmpl = "https://apis.roblox.com/assets/v1/assets/"
 -- Table for types of Roblox assets (may be out of date)
 local assetTypes = {
     [1] = {astTypeId=1,astType="Image",astFormat=".png"},
-    [2] = {astTypeId=2,astType="TeeShirt",astFormat=".xml"},
+    [2] = {astTypeId=2,astType="TeeShirt",astFormat=".rbxm"},
     [3] = {astTypeId=3,astType="Audio",astFormat=".xml"},
     [4] = {astTypeId=4,astType="Mesh",astFormat=".mesh"},
     [5] = {astTypeId=5,astType="Lua",astFormat=""},
-    [6] = {astTypeId=8,astType="Hat",astFormat=".xml"},
+    [6] = {astTypeId=8,astType="Hat",astFormat=".rbxm"},
     [7] = {astTypeId=9,astType="Place",astFormat=".rbxl"},
     [8] = {astTypeId=10,astType="Model",astFormat=".rbxm"},
-    [9] = {astTypeId=11,astType="Shirt",astFormat=".xml"},
-    [10] = {astTypeId=12,astType="Pants",astFormat=".xml"},
-    [11] = {astTypeId=13,astType="Decal",astFormat=".xml"},
-    [12] = {astTypeId=17,astType="Head",astFormat=".xml"},
-    [13] = {astTypeId=18,astType="Face",astFormat=".xml"},
-    [14] = {astTypeId=19,astType="Gear",astFormat=".xml"},
+    [9] = {astTypeId=11,astType="Shirt",astFormat=".rbxm"},
+    [10] = {astTypeId=12,astType="Pants",astFormat=".rbxm"},
+    [11] = {astTypeId=13,astType="Decal",astFormat=".rbxm"},
+    [12] = {astTypeId=17,astType="Head",astFormat=".rbxm"},
+    [13] = {astTypeId=18,astType="Face",astFormat=".rbxm"},
+    [14] = {astTypeId=19,astType="Gear",astFormat=".rbxm"},
     [15] = {astTypeId=21,astType="Badge",astFormat=""},
-    [16] = {astTypeId=24,astType="Animation",astFormat=".xml"},
-    [17] = {astTypeId=27,astType="Torso",astFormat=".xml"},
-    [18] = {astTypeId=28,astType="RightArm",astFormat=".xml"},
-    [19] = {astTypeId=29,astType="LeftArm",astFormat=".xml"},
-    [20] = {astTypeId=30,astType="LeftLeg",astFormat=".xml"},
-    [21] = {astTypeId=31,astType="RightLeg",astFormat=".xml"},
-    [22] = {astTypeId=32,astType="Package",astFormat=".xml"},
+    [16] = {astTypeId=24,astType="Animation",astFormat=".rbxm"},
+    [17] = {astTypeId=27,astType="Torso",astFormat=".rbxm"},
+    [18] = {astTypeId=28,astType="RightArm",astFormat=".rbxm"},
+    [19] = {astTypeId=29,astType="LeftArm",astFormat=".rbxm"},
+    [20] = {astTypeId=30,astType="LeftLeg",astFormat=".rbxm"},
+    [21] = {astTypeId=31,astType="RightLeg",astFormat=".rbxm"},
+    [22] = {astTypeId=32,astType="Package",astFormat=".rbxm"},
     [23] = {astTypeId=33,astType="YouTubeVideo",astFormat=""},
     [24] = {astTypeId=34,astType="GamePass",astFormat=".xml"},
-    [25] = {astTypeId=38,astType="Plugin",astFormat=".xml"},
-    [26] = {astTypeId=39,astType="SolidModel",astFormat=".xml"},
+    [25] = {astTypeId=38,astType="Plugin",astFormat=".rbxm"},
+    [26] = {astTypeId=39,astType="SolidModel",astFormat=".rbxm"},
     [27] = {astTypeId=40,astType="MeshPart",astFormat=".rbxm"},
-    [28] = {astTypeId=41,astType="HairAccessory",astFormat=".xml"},
-    [29] = {astTypeId=42,astType="FaceAccessory",astFormat=".xml"},
-    [30] = {astTypeId=43,astType="NeckAccessory",astFormat=".xml"},
-    [31] = {astTypeId=44,astType="ShoulderAccessory",astFormat=".xml"},
-    [32] = {astTypeId=45,astType="FrontAccessory",astFormat=".xml"},
-    [33] = {astTypeId=46,astType="BackAccessory",astFormat=".xml"},
-    [34] = {astTypeId=47,astType="WaistAccessory",astFormat=".xml"},
+    [28] = {astTypeId=41,astType="HairAccessory",astFormat=".rbxm"},
+    [29] = {astTypeId=42,astType="FaceAccessory",astFormat=".rbxm"},
+    [30] = {astTypeId=43,astType="NeckAccessory",astFormat=".rbxm"},
+    [31] = {astTypeId=44,astType="ShoulderAccessory",astFormat=".rbxm"},
+    [32] = {astTypeId=45,astType="FrontAccessory",astFormat=".rbxm"},
+    [33] = {astTypeId=46,astType="BackAccessory",astFormat=".rbxm"},
+    [34] = {astTypeId=47,astType="WaistAccessory",astFormat=".rbxm"},
     [35] = {astTypeId=48,astType="ClimbAnimation",astFormat=""},
     [36] = {astTypeId=49,astType="DeathAnimation",astFormat=""},
     [37] = {astTypeId=50,astType="FallAnimation",astFormat=""},
@@ -72,8 +74,8 @@ local assetTypes = {
     [41] = {astTypeId=54,astType="SwimAnimation",astFormat=""},
     [42] = {astTypeId=55,astType="WalkAnimation",astFormat=""},
     [43] = {astTypeId=56,astType="PoseAnimation",astFormat=""},
-    [44] = {astTypeId=57,astType="EarAccessory",astFormat=".xml"},
-    [45] = {astTypeId=58,astType="EyeAccessory",astFormat=".xml"},
+    [44] = {astTypeId=57,astType="EarAccessory",astFormat=".rbxm"},
+    [45] = {astTypeId=58,astType="EyeAccessory",astFormat=".rbxm"},
     [46] = {astTypeId=61,astType="EmoteAnimation",astFormat=""},
     [47] = {astTypeId=62,astType="Video",astFormat=""},
     [48] = {astTypeId=0,astType="Unknown",astFormat=""},
@@ -151,7 +153,9 @@ local function getAsset(id,ver)
     else
         warn("Status code:",response.statusCode)
         log(logs,"DOWNLOAD FAILED with status code: "..tostring(response.statusCode))
-        error("Could not get downloaded asset data!")
+        if not ignoreDLErrors then
+            error("Could not get downloaded asset data!")
+        end
         return nil
     end
 end
@@ -250,11 +254,10 @@ local function downloadAsset(id)
     log(logs,"assetType: "..assetType)
     print("assetExtension: ".._assetExtension)
     log(logs,"assetExtension: ".._assetExtension)
-    print("creatorId: "..assetCreatorId)
-    log(logs,"creatorId: "..assetCreatorId)
-    print("displayName: "..displayName)
-    log(logs,"displayName: "..displayName)
-    log(logs,"description: "..description)
+    if assetCreatorId ~= nil then print("creatorId: "..assetCreatorId); log(logs,"creatorId: "..assetCreatorId) else print("creatorId: nil"); log(logs,"creatorId: nil") end
+    if displayName ~= nil then print("displayName: "..displayName); log(logs,"displayName: "..displayName) else print("displayName: nil"); log(logs,"displayName: nil") end
+    if description ~= nil then log(logs,"description: "..description) else log(logs,"description: nil") end
+
     if spVer ~= nil then
         print("specifiedAssetVer: "..assetVer)
         log(logs,"specifiedAssetVer: "..assetVer)
@@ -268,9 +271,13 @@ local function downloadAsset(id)
     local assetData = getAsset(id,assetVer)
 
     if spDir ~= nil then
-        saveAsset(assetData,spDir,_assetExtension,id,assetVer)
+        if assetData ~= nil then
+            saveAsset(assetData,spDir,_assetExtension,id,assetVer)
+        end
     else
-        saveAsset(assetData,assetType,_assetExtension,id,assetVer)
+        if assetData ~= nil then
+            saveAsset(assetData,assetType,_assetExtension,id,assetVer)
+        end
     end
 end
 
@@ -293,25 +300,20 @@ local function initialize()
     print("Roblox Asset Downloader (v"..dlVer..")")
     print("Scripted by SkylarZYX")
     print("")
-    if #process.args > 6 then
+    if #process.args > 7 then
         error("Too many arguments!")
     elseif #process.args > 0 then -- Argument parsing... fun
         apiKey = fs.readFile(process.args[1])
         if process.args[2] ~= nil then
             if string.find(process.args[2],".txt") then
                 idList2Tbl(process.args[2],assetList)
-                if process.args[3] ~= nil then
-                    if string.find(process.args[3],"--outDir") and spDir == nil then
-                        spDir = process.args[4]
-                    elseif string.find(process.args[3],"--spVer") and spVer == nil then
-                        spVer = process.args[4]
-                    end
-                    if process.args[5] ~= nil then
-                        if string.find(process.args[5],"--outDir") and spDir == nil then
-                            spDir = process.args[6]
-                        elseif string.find(process.args[5],"--spVer") and spVer == nil then
-                            spVer = process.args[6]
-                        end
+                for i=1,#process.args do
+                    if string.find(process.args[i],"--outDir") then
+                        spDir = process.args[i+1]
+                    elseif string.find(process.args[i],"--spVer") then
+                        spVer = process.args[i+1]
+                    elseif string.find(process.args[i],"--ignoreDLErrs") then
+                        ignoreDLErrors = true
                     end
                 end
                 for _,v in ipairs(assetList) do
@@ -327,7 +329,7 @@ local function initialize()
         print("If you have not figured out how to use this, enter in a list of roblox assetdelivery urls into a specific text file, or use the roblox plugin to gather the list of urls for you!")
         print("")
         print("Command Syntax/Usage:")
-        print([[lune run astDL -- key.txt astUrls.txt [optional args: --outDir specificDirectory --spVer (number)]].."]")
+        print([[lune run astDL -- key.txt astUrls.txt [optional args: --outDir specificDirectory --spVer (number) --ignoreDLErrs]].."]")
     end
 end
 

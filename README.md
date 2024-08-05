@@ -1,7 +1,7 @@
 <img align="center" width="250" src="icons/main-icon.png" alt="Downloader logo" />
 
 # Roblox Asset Downloader
-### Version 1.0a
+### Version 1.0b
 Originally scripted by SkylarZYX
 
 It downloads, gathers, and saves asset data from a list of assetdelivery URLs (from a specified text file) to your computer. It's quite useful for trying to preserve your cloud saved assets locally on a project.
