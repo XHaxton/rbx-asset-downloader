@@ -13,7 +13,7 @@ The Roblox plugin is for easily selecting assets in your explorer, then gatherin
 I plan on adding additional features for converting local to cloud asset paths or cloud to local asset paths in the future. (hopefully)
 
 ## Usage
-`lune run astDL -- key.txt astUrls.txt [optional args: --outDir specificDirectory --spVer (number) --spVer (number) --ignoreDLErrs]`
+`lune run astDL -- key.txt astUrls.txt [optional args: --outDir specificDirectory --spVer (number) --ignoreDLErrs]`
 
 Here is a [demonstration video on how to use the plugin and the lune script](https://youtu.be/DTQGLliZKB4)
 
